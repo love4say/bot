@@ -565,7 +565,7 @@ async def on_ready():
 
 	# 디스코드에는 현재 본인이 어떤 게임을 플레이하는지 보여주는 기능이 있습니다.
 	# 이 기능을 사용하여 봇의 상태를 간단하게 출력해줄 수 있습니다.
-	await client.change_presence(status=discord.Status.idle, activity=discord.Game(name="여어!히사시부리!", type=1))
+	await client.change_presence(status=discord.Status.idle, activity=discord.Game(name="보스타임봇입니다!", type=1))
 
 	
 # 봇이 새로운 메시지를 수신했을때 동작되는 코드입니다.
