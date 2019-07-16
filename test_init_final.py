@@ -10,6 +10,7 @@ import math
 from discord.ext import commands
 from gtts import gTTS
 from github import Github
+from discord import File
 import base64
 
 if not discord.opus.is_loaded():
@@ -393,6 +394,10 @@ async def PlaySound(voiceclient, filename):
 		await asyncio.sleep(1)
 	voiceclient.stop()
 	source.cleanup()
+
+
+async def SendImage(voiceclient, filename):
+	return None
 
 async def dbSave():
 	global bossData
@@ -923,7 +928,7 @@ async def on_message(msg):
 		if message.content.startswith('!메뉴'):
 			embed = discord.Embed(
 					title = "----- 메뉴 -----",
-					description= '```!현재시간\n!채널확인\n!채널이동 [채널명]\n!소환\n!불러오기\n!초기화\n!명치\n!미예약\n!분배 [인원] [금액]\n!사다리 [뽑을인원수] [아이디1] [아이디2] ...\n!보스일괄 00:00 또는 !보스일괄 0000\n!ㅂ,ㅃ,q\n\n[보스명]컷\n[보스명]컷 00:00 또는 [보스명]컷 0000\n[보스명]멍\n[보스명]멍 00:00 또는 [보스명]멍 0000\n[보스명]예상 00:00 또는 [보스명]예상 0000\n[보스명]삭제\n보스탐```',
+					description= '```!현재시간\n!채널확인\n!채널이동 [채널명]\n!소환\n!불러오기\n!초기화\n!명치\n!미예약\n!분배 [인원] [금액]\n!사다리 [뽑을인원수] [아이디1] [아이디2] ...\n!보스일괄 00:00 또는 !보스일괄 0000\n!ㅂ,ㅃ,q\n!위치 [보스명]\n\n[보스명]컷\n[보스명]컷 00:00 또는 [보스명]컷 0000\n[보스명]멍\n[보스명]멍 00:00 또는 [보스명]멍 0000\n[보스명]예상 00:00 또는 [보스명]예상 0000\n[보스명]삭제\n보스탐```',
 					color=0xff00ff
 					)
 			embed.add_field(
@@ -1282,5 +1287,19 @@ async def on_message(msg):
 			embed.add_field(name='8시간', value='리칸트', inline=False)
 			embed.add_field(name='10시간', value='커츠', inline=False)
 			await client.get_channel(channel).send(embed=embed, tts=False)
+
+		if message.content.startswith('!위치'):
+			# await client.get_channel(channel).send('```위치를 확인할 보스명을 입력해주세요? ex) !위치 [보스명]```', tts=False)
+			args = []
+			args = message.content[4:].split(" ")
+			argsMustLen = 1
+			argsLen = len(args)
+			if argsLen != argsMustLen:
+				await client.get_channel(channel).send('```위치를 확인할 보스명을 입력해주세요. ex) !위치 [보스명]```', tts=False)
+			else:
+				bossName = args[0]
+				title = bossName + '의 위치입니다'
+				filtPath = './images/' + bossName + '.png'
+				await client.get_channel(channel).send(title, file=File(filtPath))
 
 client.run(access_token)
