@@ -209,7 +209,7 @@ def init():
 	for i in range(fixed_bossNum):
 		if fixed_bossTime[i] < tmp_fixed_now :
 			fixed_bossTime[i] = fixed_bossTime[i] + datetime.timedelta(days=int(1))
-		
+
 	#inidata.close()
 
 init()
@@ -305,8 +305,19 @@ async def my_background_task():
 								description= "```" + fixed_bossData[i][0] + '탐 ' + fixed_bossData[i][4] + "```" ,
 								color=0x00ff00
 								)
-						await client.get_channel(channel).send(embed=embed, tts=False)
-						await PlaySound(voice_client1, './sound/' + fixed_bossData[i][0] + '젠.mp')
+
+						filePath = './images/' + fixed_bossData[i][0] + '.png'
+						if os.path.isfile(filePath):
+							embed.description = "```" + fixed_bossData[i][0] + ' 위치 참고하세요.\n' + "```" + embed.description
+							await client.get_channel(channel).send(embed=embed, file=File(filePath), tts=False)
+						else :
+							await client.get_channel(channel).send(embed=embed, tts=False)
+
+
+						soundPath = './sound/' + fixed_bossData[i][0] + '젠.mp3'
+						if voice_client1 is not None and os.path.isfile(soundPath):
+							await PlaySound(voice_client1, soundPath)
+
 
 				for i in range(bossNum):
 					if bossTime[i] <= priv0 and bossTime[i] > priv:
@@ -314,14 +325,22 @@ async def my_background_task():
 							if bossFlag0[i] == False:
 								bossFlag0[i] = True
 								await client.get_channel(channel).send("```" + bossData[i][0] + ' ' + basicSetting[3] + '분 전 ' + bossData[i][3] + "```", tts=False)
-								await PlaySound(voice_client1, './sound/' + bossData[i][0] + '알림1.mp')
+
+								soundPath = './sound/' + bossData[i][0] + '알림1.mp3'
+								if voice_client1 is not None and os.path.isfile(soundPath):
+									await PlaySound(voice_client1, soundPath)
+
 
 					if bossTime[i] <= priv and bossTime[i] > now:
 						if basicSetting[1] != '0' :
 							if bossFlag[i] == False:
 								bossFlag[i] = True
 								await client.get_channel(channel).send("```" + bossData[i][0] + ' ' + basicSetting[1] + '분 전 ' + bossData[i][3] + "```", tts=False)
-								await PlaySound(voice_client1, './sound/' + bossData[i][0] + '알림.mp')
+								
+								soundPath = './sound/' + bossData[i][0] + '알림.mp3'
+								if voice_client1 is not None and os.path.isfile(soundPath):
+									await PlaySound(voice_client1, soundPath)
+
 
 					if bossTime[i] <= now :
 						#print ('if ', bossTime[i])
@@ -336,15 +355,31 @@ async def my_background_task():
 								description= "```" + bossData[i][0] + '탐 ' + bossData[i][4] + "```" ,
 								color=0x00ff00
 								)
-						await client.get_channel(channel).send(embed=embed, tts=False)
-						await PlaySound(voice_client1, './sound/' + bossData[i][0] + '젠.mp')
+								
+						filePath = './images/' + bossData[i][0] + '.png'
+						if os.path.isfile(filePath):
+							embed.description = "```" + bossData[i][0] + ' 위치 참고하세요.\n' + "```" + embed.description
+							await client.get_channel(channel).send(embed=embed, file=File(filePath), tts=False)
+						else :
+							await client.get_channel(channel).send(embed=embed, tts=False)
+
+
+						soundPath = './sound/' + bossData[i][0] + '젠.mp3'
+						if voice_client1 is not None and os.path.isfile(soundPath):
+							await PlaySound(voice_client1, soundPath)
+
 
 					if bossMungFlag[i] == True:
 						if (bossTime[i]+datetime.timedelta(days=-365)) <= aftr:
 							if basicSetting[2] != '0':
 								if bossData[i][2] == '0':
 									await client.get_channel(channel).send("```" +  bossData[i][0] + ' 미입력 됐습니다.```', tts=False)
-									await PlaySound(voice_client1, './sound/' + bossData[i][0] + '미입력.mp')
+
+									soundPath = './sound/' + bossData[i][0] + '미입력.mp3'
+									if voice_client1 is not None and os.path.isfile(soundPath):
+										await PlaySound(voice_client1, soundPath)
+
+
 									bossFlag[i] = False
 									bossFlag0[i] = False
 									bossMungFlag[i] = False
@@ -360,7 +395,12 @@ async def my_background_task():
 									await dbSave()
 								else :
 									await client.get_channel(channel).send("```" + bossData[i][0] + ' 멍 입니다.```')
-									await PlaySound(voice_client1, './sound/' + bossData[i][0] + '멍.mp')
+
+									soundPath = './sound/' + bossData[i][0] + '멍.mp3'
+									if voice_client1 is not None and os.path.isfile(soundPath):
+										await PlaySound(voice_client1, soundPath)
+
+
 									bossFlag[i] = False
 									bossFlag0[i] = False
 									bossMungFlag[i] = False
@@ -497,6 +537,31 @@ async def dbLoad():
 		LoadChk = 1
 		print ("보스타임 정보가 없습니다.")
 
+
+async def initSoundFile(beforeAlert1, beforeAlert):
+	global fixed_bossData
+	global fixed_bossNum
+	global bossData
+	global bossNum
+
+	beforeAlertMent1 = ' ' + beforeAlert1 + '분 전입니다'
+	beforeAlertMent = ' ' + beforeAlert + '분 전입니다'
+	fileList = [('미입력', ' 미 입력 됬습니다'), ('알림1', beforeAlertMent1), ('알림', beforeAlertMent), ('젠', ' 타임 입니다'), ('멍', ' 멍 입니다')]
+
+	for (t, m) in fileList:
+		for i in range(bossNum):
+			bossName = bossData[i][0]
+			soundPath = './sound/' + bossName + t
+			if os.path.isfile(soundPath + '.mp3'):
+				await MakeSound(bossName + m, soundPath)
+
+		for i in range(fixed_bossNum):
+			bossName = fixed_bossData[i][0]
+			soundPath = './sound/' + bossName + t
+			if os.path.isfile(soundPath + '.mp3'):
+				await MakeSound(bossName + m, soundPath)
+
+
 async def JointheVC(VCchannel, TXchannel):
 	global chkvoicechannel
 	global voice_client1
@@ -558,7 +623,11 @@ async def on_ready():
 			channel_voice_id.append(str(channel_info[i].id))
 
 	await dbLoad()
-	
+
+	#await client.get_channel(basicSetting[7]).send('< 음성파일 초기화하고 있습니다. >', tts=False)
+	#await initSoundFile(basicSetting[3], basicSetting[1])
+	#await client.get_channel(basicSetting[7]).send('< 음성파일 초기화가 끝났습니다. >', tts=False)
+
 	if basicSetting[6] != "" and basicSetting[7] != "" :
 		#print ('join channel')
 		await JointheVC(client.get_channel(basicSetting[6]), client.get_channel(basicSetting[7]))
@@ -886,11 +955,19 @@ async def on_message(msg):
 				print ('<' + bossData[i][0] + ' 삭제완료>')
 			
 		if message.content.startswith('!오빠'):
-			await PlaySound(voice_client1, './sound/오빠.mp3')
+			soundPath = './sound/오빠.mp3'
+			if voice_client1 is not None and os.path.isfile(soundPath):
+				await PlaySound(voice_client1, soundPath)
+
 		if message.content.startswith('!언니'):
-			await PlaySound(voice_client1, './sound/언니.mp3')
+			soundPath = './sound/언니.mp3'
+			if voice_client1 is not None and os.path.isfile(soundPath):
+				await PlaySound(voice_client1, soundPath)
+
 		if message.content.startswith('!형'):
-			await PlaySound(voice_client1, './sound/형.mp3')
+			soundPath = './sound/형.mp3'
+			if voice_client1 is not None and os.path.isfile(soundPath):
+				await PlaySound(voice_client1, soundPath)
 
 		##################################
 
@@ -1288,18 +1365,21 @@ async def on_message(msg):
 			embed.add_field(name='10시간', value='커츠', inline=False)
 			await client.get_channel(channel).send(embed=embed, tts=False)
 
-###		if message.content.startswith('!위치'):
-###			# await client.get_channel(channel).send('```위치를 확인할 보스명을 입력해주세요? ex) !위치 [보스명]```', tts=False)
-###			args = []
-###			args = message.content[4:].split(" ")
-###			argsMustLen = 1
-###			argsLen = len(args)
-###			if argsLen != argsMustLen:
-###				await client.get_channel(channel).send('```위치를 확인할 보스명을 입력해주세요. ex) !위치 [보스명]```', tts=False)
-###			else:
-###				bossName = args[0]
-###				title = bossName + '의 위치입니다'
-###				filtPath = './images/' + bossName + '.png'
-###				await client.get_channel(channel).send(title, file=File(filtPath))
+		if message.content.startswith('!위치'):
+			# await client.get_channel(channel).send('```위치를 확인할 보스명을 입력해주세요? ex) !위치 [보스명]```', tts=False)
+			args = []
+			args = message.content[4:].split(" ")
+			argsMustLen = 1
+			argsLen = len(args)
+			if argsLen != argsMustLen:
+				await client.get_channel(channel).send('```위치를 확인할 보스명을 입력해주세요. ex) !위치 [보스명]```', tts=False)
+			else:
+				bossName = args[0]
+				filePath = './images/' + bossName + '.png'
+				if os.path.isfile(filePath):
+					title = bossName + '의 위치입니다'
+					await client.get_channel(channel).send(title, file=File(filtPath))
+				else:
+					await client.get_channel(channel).send('입력하신 보스의 위치 정보가 등록되지 않았습니다.')
 
 client.run(access_token)
