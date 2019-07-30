@@ -1288,18 +1288,18 @@ async def on_message(msg):
 			embed.add_field(name='10시간', value='커츠', inline=False)
 			await client.get_channel(channel).send(embed=embed, tts=False)
 
-		if message.content.startswith('!위치'):
-			# await client.get_channel(channel).send('```위치를 확인할 보스명을 입력해주세요? ex) !위치 [보스명]```', tts=False)
-			args = []
-			args = message.content[4:].split(" ")
-			argsMustLen = 1
-			argsLen = len(args)
-			if argsLen != argsMustLen:
-				await client.get_channel(channel).send('```위치를 확인할 보스명을 입력해주세요. ex) !위치 [보스명]```', tts=False)
-			else:
-				bossName = args[0]
-				title = bossName + '의 위치입니다'
-				filtPath = './images/' + bossName + '.png'
-				await client.get_channel(channel).send(title, file=File(filtPath))
+###		if message.content.startswith('!위치'):
+###			# await client.get_channel(channel).send('```위치를 확인할 보스명을 입력해주세요? ex) !위치 [보스명]```', tts=False)
+###			args = []
+###			args = message.content[4:].split(" ")
+###			argsMustLen = 1
+###			argsLen = len(args)
+###			if argsLen != argsMustLen:
+###				await client.get_channel(channel).send('```위치를 확인할 보스명을 입력해주세요. ex) !위치 [보스명]```', tts=False)
+###			else:
+###				bossName = args[0]
+###				title = bossName + '의 위치입니다'
+###				filtPath = './images/' + bossName + '.png'
+###				await client.get_channel(channel).send(title, file=File(filtPath))
 
 client.run(access_token)
