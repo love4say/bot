@@ -1378,8 +1378,8 @@ async def on_message(msg):
 				filePath = './images/' + bossName + '.png'
 				if os.path.isfile(filePath):
 					title = bossName + '의 위치입니다'
-					await client.get_channel(channel).send(title, file=File(filtPath))
+					await client.get_channel(channel).send(title, file=File(filePath), tts=False)
 				else:
-					await client.get_channel(channel).send('입력하신 보스의 위치 정보가 등록되지 않았습니다.')
+					await client.get_channel(channel).send('입력하신 보스의 위치 정보가 등록되지 않았습니다.', tts=False)
 
 client.run(access_token)
