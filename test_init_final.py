@@ -16,6 +16,8 @@ import base64
 if not discord.opus.is_loaded():
 	discord.opus.load_opus('opus')
 
+weekdays = ['월', '화', '수', '목', '금', '토', '일']
+
 basicSetting = []
 bossData = []
 fixed_bossData = []
@@ -140,7 +142,7 @@ def init():
 	
 	bossNum = int((len(inputData)-7)/5)
 
-	fixed_bossNum = int(len(fixed_inputData)/4) 
+	fixed_bossNum = int(len(fixed_inputData)/5) 
 	
 	#print (bossNum)
 	
@@ -148,7 +150,7 @@ def init():
 		tmp_bossData.append(inputData[i*5+7:i*5+12])
 
 	for i in range(fixed_bossNum):
-		tmp_fixed_bossData.append(fixed_inputData[i*4:i*4+4]) 
+		tmp_fixed_bossData.append(fixed_inputData[i*5:i*5+5]) 
 		
 	#print (tmp_bossData)
 		
@@ -179,6 +181,7 @@ def init():
 		fb.append(tmp_fixed_bossData[j][1][tmp_fixed_len+1:])  #2 : 분
 		fb.append(tmp_fixed_bossData[j][2][20:])               #3 : 분전 알림멘트
 		fb.append(tmp_fixed_bossData[j][3][13:])               #4 : 젠 알림멘트
+		fb.append(tmp_fixed_bossData[j][4][10:])               #5 : 요일
 		fixed_bossData.append(fb)
 		fb = []
 		
@@ -232,6 +235,7 @@ async def my_background_task():
 	global basicSetting
 	global bossData
 	global fixed_bossData
+	global weekdays
 
 	global bossNum
 	global fixed_bossNum
@@ -299,24 +303,30 @@ async def my_background_task():
 					endTime = endTime + datetime.timedelta(days = 1)
 
 				for i in range(fixed_bossNum):
-					if fixed_bossTime[i] <= now :
-						fixed_bossTime[i] = now+datetime.timedelta(days=int(1))
-						embed = discord.Embed(
-								description= "```" + fixed_bossData[i][0] + '탐 ' + fixed_bossData[i][4] + "```" ,
-								color=0x00ff00
-								)
+					if fixed_bossTime[i] <= now:
+						weekday = now.weekday()
+						if weekday < 0 or weekday == int(fixed_bossData[i][5]):	
+							message = ""
+							if weekday >= 0:
+								message = weekdays[weekday] + "요일 보스\n"
 
-						filePath = './images/' + fixed_bossData[i][0] + '.png'
-						if os.path.isfile(filePath):
-							embed.description = "```" + fixed_bossData[i][0] + ' 위치 참고하세요.\n' + "```" + embed.description
-							await client.get_channel(channel).send(embed=embed, file=File(filePath), tts=False)
-						else :
-							await client.get_channel(channel).send(embed=embed, tts=False)
+							fixed_bossTime[i] = now+datetime.timedelta(days=int(1))
+							embed = discord.Embed(
+									description= "```" + message + fixed_bossData[i][0] + '탐 ' + fixed_bossData[i][4] + "```" ,
+									color=0x00ff00
+									)
+
+							filePath = './images/' + fixed_bossData[i][0] + '.png'
+							if os.path.isfile(filePath):
+								embed.description = "```" + fixed_bossData[i][0] + ' 위치 참고하세요.\n' + "```" + embed.description
+								await client.get_channel(channel).send(embed=embed, file=File(filePath), tts=False)
+							else :
+								await client.get_channel(channel).send(embed=embed, tts=False)
 
 
-						soundPath = './sound/' + fixed_bossData[i][0] + '젠.mp3'
-						if voice_client1 is not None and os.path.isfile(soundPath):
-							await PlaySound(voice_client1, soundPath)
+							soundPath = './sound/' + fixed_bossData[i][0] + '젠.mp3'
+							if voice_client1 is not None and os.path.isfile(soundPath):
+								await PlaySound(voice_client1, soundPath)
 
 
 				for i in range(bossNum):
@@ -653,6 +663,7 @@ async def on_message(msg):
 	global basicSetting
 	global bossData
 	global fixed_bossData
+	global weekdays
 
 	global bossNum
 	global fixed_bossNum
@@ -1279,8 +1290,15 @@ async def on_message(msg):
 			
 			fixed_information = ''
 			for i in range(fixed_bossNum):
-					tmp_timeSTR = fixed_bossTime[i].strftime('%H:%M:%S')
-					fixed_information += fixed_bossData[i][0] + ' : ' + tmp_timeSTR + '\n'
+				weekday = ''
+				if int(fixed_bossData[i][5]) < 0:
+					weekday = '매일'
+				else:
+					if int(fixed_bossData[i][5]) < 7:
+						weekday = weekdays[int(fixed_bossData[i][5])]
+
+				tmp_timeSTR = fixed_bossTime[i].strftime('%H:%M:%S')
+				fixed_information += '(' + weekday + ') ' + fixed_bossData[i][0] + ' : ' + tmp_timeSTR + '\n'
 						
 			fixed_information = '```' + fixed_information + '```'
 
