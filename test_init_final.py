@@ -193,8 +193,10 @@ def init():
 	print ('보스멍확인시간 : ', basicSetting[2])
 	
 	for i in range(bossNum):
-		bossTime.append(datetime.datetime.now()+datetime.timedelta(days=365, hours = int(basicSetting[0])))
-		tmp_bossTime.append(datetime.datetime.now()+datetime.timedelta(days=365, hours = int(basicSetting[0])))
+		bossTimeLocalValue = datetime.datetime.now()+datetime.timedelta(days=365, hours = int(basicSetting[0]))
+		bossTimeLocalValue = bossTimeLocalValue.replace(second=int(0))
+		bossTime.append(bossTimeLocalValue)
+		tmp_bossTime.append(bossTimeLocalValue)
 		bossTimeString.append('99:99:99')
 		bossDateString.append('9999-99-99')
 		tmp_bossTimeString.append('99:99:99')
@@ -397,8 +399,9 @@ async def my_background_task():
 									tmp_bossTime[i] = bossTime[i] = nextTime = now+datetime.timedelta(hours=int(bossData[i][1]), minutes=int(0-int(basicSetting[2])+int(bossData[i][5])))
 									tmp_bossTimeString[i] = bossTimeString[i] = nextTime.strftime('%H:%M:%S')
 									tmp_bossDateString[i] = bossDateString[i] = nextTime.strftime('%Y-%m-%d')
+									showBossTimeString = nextTime.strftime('%H:%M')
 									embed = discord.Embed(
-										description= '```다음 ' + bossData[i][0] + ' ' + bossTimeString[i] + '입니다.```',
+										description= '```다음 ' + bossData[i][0] + ' ' + showBossTimeString + ' 입니다.```',
 										color=0xff0000
 										)
 									await client.get_channel(channel).send(embed=embed, tts=False)
@@ -418,8 +421,9 @@ async def my_background_task():
 									tmp_bossTime[i] = bossTime[i] = nextTime = now+datetime.timedelta(hours=int(bossData[i][1]), minutes=int(0-int(basicSetting[2])+int(bossData[i][5])))
 									tmp_bossTimeString[i] = bossTimeString[i] = nextTime.strftime('%H:%M:%S')
 									tmp_bossDateString[i] = bossDateString[i] = nextTime.strftime('%Y-%m-%d')
+									showBossTimeString = nextTime.strftime('%H:%M')
 									embed = discord.Embed(
-										description= '```다음 ' + bossData[i][0] + ' ' + bossTimeString[i] + '입니다.```',
+										description= '```다음 ' + bossData[i][0] + ' ' + showBossTimeString + ' 입니다.```',
 										color=0xff0000
 										)
 									await client.get_channel(channel).send(embed=embed, tts=False)
@@ -835,11 +839,13 @@ async def on_message(msg):
 				else :
 					now2 = now2 + datetime.timedelta(hours = int(bossData[i][1]), minutes = int(bossData[i][5]))
 							
+				now2 = now2.replace(second=int(0))
 				tmp_bossTime[i] = bossTime[i] = nextTime = now2
 				tmp_bossTimeString[i] = bossTimeString[i] = nextTime.strftime('%H:%M:%S')
 				tmp_bossDateString[i] = bossDateString[i] = nextTime.strftime('%Y-%m-%d')
+				showBossTimeString = nextTime.strftime('%H:%M')
 				embed = discord.Embed(
-						description= '```다음 ' + bossData[i][0] + ' ' + bossTimeString[i] + '입니다.```',
+						description= '```다음 ' + bossData[i][0] + ' ' + showBossTimeString + ' 입니다.```',
 						color=0xff0000
 						)
 				await client.get_channel(channel).send(embed=embed, tts=False)
@@ -890,12 +896,14 @@ async def on_message(msg):
 					nextTime = nextTime
 
 				
-				bossTime[i] = nextTime				
+				nextTime = nextTime.replace(second=int(0))
+				bossTime[i] = nextTime	
 
 				tmp_bossTimeString[i] = bossTimeString[i] = nextTime.strftime('%H:%M:%S')
 				tmp_bossDateString[i] = bossDateString[i] = nextTime.strftime('%Y-%m-%d')
+				showBossTimeString = nextTime.strftime('%H:%M')
 				embed = discord.Embed(
-						description= '```다음 ' + bossData[i][0] + ' ' + bossTimeString[i] + '입니다.```',
+						description= '```다음 ' + bossData[i][0] + ' ' + showBossTimeString + ' 입니다.```',
 						color=0xff0000
 						)
 				await client.get_channel(channel).send(embed=embed, tts=False)
@@ -936,11 +944,13 @@ async def on_message(msg):
 					if tmp_now < now2 :
 						tmp_now = tmp_now + datetime.timedelta(days=int(1))
 
+					tmp_now = tmp_now.replace(second=int(0))
 					tmp_bossTime[i] = bossTime[i] = nextTime = tmp_now
 					tmp_bossTimeString[i] = bossTimeString[i] = nextTime.strftime('%H:%M:%S')
 					tmp_bossDateString[i] = bossDateString[i] = nextTime.strftime('%Y-%m-%d')
+					showBossTimeString = nextTime.strftime('%H:%M')
 					embed = discord.Embed(
-							description= '```다음 ' + bossData[i][0] + ' ' + bossTimeString[i] + '입니다.```',
+							description= '```다음 ' + bossData[i][0] + ' ' + showBossTimeString + ' 입니다.```',
 							color=0xff0000
 							)
 					await client.get_channel(channel).send(embed=embed, tts=False)
@@ -1193,7 +1203,7 @@ async def on_message(msg):
 					now2 = now2 + datetime.timedelta(hours = int(bossData[i][1]), minutes = int(bossData[i][5]))
 							
 				tmp_bossTime[i] = bossTime[i] = nextTime = now2
-				tmp_bossTimeString[i] = bossTimeString[i] = nextTime.strftime('%H:%M:%S')
+				tmp_bossTimeString[i] = bossTimeString[i] = nextTime.strftime('%H:%M:00')
 				tmp_bossDateString[i] = bossDateString[i] = nextTime.strftime('%Y-%m-%d')
 
 			await dbSave()
@@ -1249,7 +1259,7 @@ async def on_message(msg):
 						hours, remainder = divmod(total_seconds,60*60)
 						minutes, seconds = divmod(remainder,60)
 
-						result_lefttime = "```" + bossData[i][0] + '탐 %02d:%02d:%02d 남았습니다.```' % (hours,minutes,seconds)
+						result_lefttime = "```" + bossData[i][0] + '탐 %02d:%02d 남았습니다.```' % (hours,minutes)
 
 						embed = discord.Embed(
 							description = result_lefttime,
@@ -1297,7 +1307,7 @@ async def on_message(msg):
 					if int(fixed_bossData[i][5]) < 7:
 						weekday = weekdays[int(fixed_bossData[i][5])]
 
-				tmp_timeSTR = fixed_bossTime[i].strftime('%H:%M:%S')
+				tmp_timeSTR = fixed_bossTime[i].strftime('%H:%M')
 				fixed_information += '(' + weekday + ') ' + fixed_bossData[i][0] + ' : ' + tmp_timeSTR + '\n'
 						
 			fixed_information = '```' + fixed_information + '```'
@@ -1318,16 +1328,17 @@ async def on_message(msg):
 				for i in range(bossNum):
 					if timestring == bossTime[i]:
 						if bossTimeString[i] != '99:99:99' :
+							showBossTimeStringLocalValue = bossTimeString[i][:5]
 							if bossData[i][2] == '0' :
 								if bossMungCnt[i] == 0 :
-									information += bossData[i][0] + ' : ' + bossTimeString[i] + ' ' + bossData[i][6] + '\n'
+									information += bossData[i][0] + ' : ' + showBossTimeStringLocalValue + ' ' + bossData[i][6] + '\n'
 								else :
-									information += bossData[i][0] + ' : ' + bossTimeString[i] + ' (미 ' + str(bossMungCnt[i]) + '회)' + ' ' + bossData[i][6] + '\n'
+									information += bossData[i][0] + ' : ' + showBossTimeStringLocalValue + ' (미 ' + str(bossMungCnt[i]) + '회)' + ' ' + bossData[i][6] + '\n'
 							else : 
 								if bossMungCnt[i] == 0 :
-									information += bossData[i][0] + ' : ' + bossTimeString[i] + ' ' + bossData[i][6] + '\n'
+									information += bossData[i][0] + ' : ' + showBossTimeStringLocalValue + ' ' + bossData[i][6] + '\n'
 								else :
-									information += bossData[i][0] + ' : ' + bossTimeString[i] + ' (멍 ' + str(bossMungCnt[i]) + '회)' + ' ' + bossData[i][6] + '\n'
+									information += bossData[i][0] + ' : ' + showBossTimeStringLocalValue + ' (멍 ' + str(bossMungCnt[i]) + '회)' + ' ' + bossData[i][6] + '\n'
 									
 			if len(information) != 0:
 				information = "\n  ```" + information + "```"
