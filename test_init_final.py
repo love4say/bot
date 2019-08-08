@@ -304,13 +304,13 @@ async def my_background_task():
 
 				for i in range(fixed_bossNum):
 					if fixed_bossTime[i] <= now:
+						fixed_bossTime[i] = now+datetime.timedelta(days=int(1))
 						weekday = now.weekday()
 						if weekday < 0 or weekday == int(fixed_bossData[i][5]):	
 							message = ""
 							if weekday >= 0:
 								message = weekdays[weekday] + "요일 보스\n"
 
-							fixed_bossTime[i] = now+datetime.timedelta(days=int(1))
 							embed = discord.Embed(
 									description= "```" + message + fixed_bossData[i][0] + '탐 ' + fixed_bossData[i][4] + "```" ,
 									color=0x00ff00
