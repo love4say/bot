@@ -16,7 +16,7 @@ import base64
 if not discord.opus.is_loaded():
 	discord.opus.load_opus('opus')
 
-weekdays = ['월', '화', '수', '목', '금', '토', '일', '매일']
+weekdays = ['월', '화', '수', '목', '금', '토', '일']
 
 basicSetting = []
 bossData = []
