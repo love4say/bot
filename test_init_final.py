@@ -307,8 +307,9 @@ async def my_background_task():
 				for i in range(fixed_bossNum):
 					if fixed_bossTime[i] <= now:
 						fixed_bossTime[i] = now+datetime.timedelta(days=int(1))
-						weekday = now.weekday()
-						if weekday < 0 or weekday == int(fixed_bossData[i][5]):	
+						weekday = int(fixed_bossData[i][5])
+						nowWeekday = now.weekday()
+						if weekday < 0 or weekday == nowWeekday:	
 							message = ""
 							if weekday >= 0:
 								message = weekdays[weekday] + "요일 보스\n"
