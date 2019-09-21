@@ -41,6 +41,7 @@ tmp_bossDateString = []
 
 bossFlag = []
 bossFlag0 = []
+fixbossFlag0 = []
 bossMungFlag = []
 bossMungCnt = []
 
@@ -84,6 +85,7 @@ def init():
 
 	global bossFlag
 	global bossFlag0
+	global fixbossFlag0
 	global bossMungFlag
 	global bossMungCnt
 	
@@ -210,6 +212,7 @@ def init():
 		
 	for i in range(fixed_bossNum):
 		fixed_bossTime.append(tmp_fixed_now.replace(hour=int(fixed_bossData[i][1]), minute=int(fixed_bossData[i][2]), second = int(0)))
+		fixbossFlag0.append(False)
 
 	for i in range(fixed_bossNum):
 		if fixed_bossTime[i] < tmp_fixed_now :
@@ -256,6 +259,7 @@ async def my_background_task():
 
 	global bossFlag
 	global bossFlag0
+	global fixbossFlag0
 	global bossMungFlag
 	global bossMungCnt
 	
@@ -274,7 +278,9 @@ async def my_background_task():
 		try:
 			now = datetime.datetime.now() + datetime.timedelta(hours = int(basicSetting[0]))
 			priv0 = now+datetime.timedelta(minutes=int(basicSetting[3]))
+			fix_priv0 = now+datetime.timedelta(minutes=int(5))
 			priv = now+datetime.timedelta(minutes=int(basicSetting[1]))
+			fix_priv = now+datetime.timedelta(minutes=int(0))
 			aftr = now+datetime.timedelta(minutes=int(0-int(basicSetting[2])))
 
 			nowTimeString = now.strftime('%H:%M:%S')
@@ -305,19 +311,42 @@ async def my_background_task():
 					endTime = endTime + datetime.timedelta(days = 1)
 
 				for i in range(fixed_bossNum):
-					if fixed_bossTime[i] <= now:
-						fixed_bossTime[i] = now+datetime.timedelta(days=int(1))
-						weekday = int(fixed_bossData[i][5])
-						nowWeekday = now.weekday()
-						if weekday < 0 or weekday == nowWeekday:	
+					weekday = int(fixed_bossData[i][5])
+					nowWeekday = now.weekday()
+					if weekday < 0 or weekday == nowWeekday:
+						if fixed_bossTime[i] <= fix_priv0 and fixed_bossTime[i] > fix_priv:
+							if fixbossFlag0[i] == False:
+								fixbossFlag0[i] = True
+
+								message = ""
+								if weekday >= 0:
+									message = "[" + weekdays[weekday] + "]요일 고정 보스\n"
+
+								if weekday < 0:
+									message = "[매일] 고정 보스\n"
+
+								await client.get_channel(channel).send("```" + message + fixed_bossData[i][0] + ' 5분 전 ' + fixed_bossData[i][3] + "```", tts=False)
+
+								soundPath = './sound/' + fixed_bossData[i][0] + '알림1.mp3'
+								if voice_client1 is not None and os.path.isfile(soundPath):
+									await PlaySound(voice_client1, soundPath)
+
+
+						if fixed_bossTime[i] <= now:
+							fixed_bossTime[i] = now+datetime.timedelta(days=int(1))
 							message = ""
 							if weekday >= 0:
-								message = weekdays[weekday] + "요일 보스\n"
+								message = "[" + weekdays[weekday] + "]요일 고정 보스\n"
+
+							if weekday < 0:
+								message = "[매일] 고정 보스\n"
 
 							embed = discord.Embed(
 									description= "```" + message + fixed_bossData[i][0] + '탐 ' + fixed_bossData[i][4] + "```" ,
 									color=0x00ff00
 									)
+
+							fixbossFlag0[i] = False
 
 							filePath = './images/' + fixed_bossData[i][0] + '.png'
 							if os.path.isfile(filePath):
