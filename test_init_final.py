@@ -327,9 +327,9 @@ async def my_background_task():
 
 								await client.get_channel(channel).send("```" + message + fixed_bossData[i][0] + ' 5분 전 ' + fixed_bossData[i][3] + "```", tts=False)
 
-								soundPath = './sound/' + fixed_bossData[i][0] + '알림1.mp'
-								if voice_client1 is not None and os.path.isfile(soundPath):
-									await PlaySound(voice_client1, soundPath)
+								# soundPath = './sound/' + fixed_bossData[i][0] + '알림1.mp'
+								# if voice_client1 is not None and os.path.isfile(soundPath):
+								# 	await PlaySound(voice_client1, soundPath)
 
 
 						if fixed_bossTime[i] <= now:
@@ -356,9 +356,9 @@ async def my_background_task():
 								await client.get_channel(channel).send(embed=embed, tts=False)
 
 
-							soundPath = './sound/' + fixed_bossData[i][0] + '젠.mp'
-							if voice_client1 is not None and os.path.isfile(soundPath):
-								await PlaySound(voice_client1, soundPath)
+							# soundPath = './sound/' + fixed_bossData[i][0] + '젠.mp'
+							# if voice_client1 is not None and os.path.isfile(soundPath):
+							# 	await PlaySound(voice_client1, soundPath)
 
 
 				for i in range(bossNum):
@@ -368,9 +368,9 @@ async def my_background_task():
 								bossFlag0[i] = True
 								await client.get_channel(channel).send("```" + bossData[i][0] + ' ' + basicSetting[3] + '분 전 ' + bossData[i][3] + "```", tts=False)
 
-								soundPath = './sound/' + bossData[i][0] + '알림1.mp'
-								if voice_client1 is not None and os.path.isfile(soundPath):
-									await PlaySound(voice_client1, soundPath)
+								# soundPath = './sound/' + bossData[i][0] + '알림1.mp'
+								# if voice_client1 is not None and os.path.isfile(soundPath):
+								# 	await PlaySound(voice_client1, soundPath)
 
 
 					if bossTime[i] <= priv and bossTime[i] > now:
@@ -379,9 +379,9 @@ async def my_background_task():
 								bossFlag[i] = True
 								await client.get_channel(channel).send("```" + bossData[i][0] + ' ' + basicSetting[1] + '분 전 ' + bossData[i][3] + "```", tts=False)
 								
-								soundPath = './sound/' + bossData[i][0] + '알림.mp'
-								if voice_client1 is not None and os.path.isfile(soundPath):
-									await PlaySound(voice_client1, soundPath)
+								# soundPath = './sound/' + bossData[i][0] + '알림.mp'
+								# if voice_client1 is not None and os.path.isfile(soundPath):
+								# 	await PlaySound(voice_client1, soundPath)
 
 
 					if bossTime[i] <= now :
@@ -406,9 +406,9 @@ async def my_background_task():
 							await client.get_channel(channel).send(embed=embed, tts=False)
 
 
-						soundPath = './sound/' + bossData[i][0] + '젠.mp'
-						if voice_client1 is not None and os.path.isfile(soundPath):
-							await PlaySound(voice_client1, soundPath)
+						# soundPath = './sound/' + bossData[i][0] + '젠.mp'
+						# if voice_client1 is not None and os.path.isfile(soundPath):
+						# 	await PlaySound(voice_client1, soundPath)
 
 
 					if bossMungFlag[i] == True:
@@ -417,9 +417,9 @@ async def my_background_task():
 								if bossData[i][2] == '0':
 									await client.get_channel(channel).send("```" +  bossData[i][0] + ' 미입력 됐습니다.```', tts=False)
 
-									soundPath = './sound/' + bossData[i][0] + '미입력.mp'
-									if voice_client1 is not None and os.path.isfile(soundPath):
-										await PlaySound(voice_client1, soundPath)
+									# soundPath = './sound/' + bossData[i][0] + '미입력.mp'
+									# if voice_client1 is not None and os.path.isfile(soundPath):
+									# 	await PlaySound(voice_client1, soundPath)
 
 
 									bossFlag[i] = False
@@ -448,9 +448,9 @@ async def my_background_task():
 								else :
 									await client.get_channel(channel).send("```" + bossData[i][0] + ' 멍 입니다.```')
 
-									soundPath = './sound/' + bossData[i][0] + '멍.mp'
-									if voice_client1 is not None and os.path.isfile(soundPath):
-										await PlaySound(voice_client1, soundPath)
+									# soundPath = './sound/' + bossData[i][0] + '멍.mp'
+									# if voice_client1 is not None and os.path.isfile(soundPath):
+									# 	await PlaySound(voice_client1, soundPath)
 
 
 									bossFlag[i] = False
@@ -490,13 +490,7 @@ async def MakeSound(saveSTR, filename):
 	tts.save('./' + filename + '.mp')
 	
 async def PlaySound(voiceclient, filename):
-	source = discord.FFmpegPCMAudio(filename)
-	voiceclient.play(source)
-	while voiceclient.is_playing():
-		await asyncio.sleep(1)
-	voiceclient.stop()
-	source.cleanup()
-
+	return None
 
 async def SendImage(voiceclient, filename):
 	return None
@@ -629,21 +623,7 @@ async def JointheVC(VCchannel, TXchannel):
 	global voice_client1
 	global task1
 
-	if VCchannel is not None:
-		if chkvoicechannel == 0:
-			voice_client1 = await VCchannel.connect()
-			if voice_client1.is_connected():
-				await voice_client1.disconnect()
-				voice_client1 = await VCchannel.connect()
-			chkvoicechannel = 1
-			await PlaySound(voice_client1, './sound/hello.mp3')
-		else :
-			await voice_client1.disconnect()
-			voice_client1 = await VCchannel.connect()
-			await PlaySound(voice_client1, './sound/hello.mp3')
-		task1 = client.loop.create_task(my_background_task())
-	else:
-		await TXchannel.send('음성채널에 먼저 들어가주세요.', tts=False)
+	task1 = client.loop.create_task(my_background_task())
 		
 # 봇이 구동되었을 때 동작되는 코드입니다.
 @client.event
@@ -1051,20 +1031,20 @@ async def on_message(msg):
 				await dbSave()
 				print ('<' + bossData[i][0] + ' 삭제완료>')
 			
-		if message.content.startswith('!오빠'):
-			soundPath = './sound/오빠.mp3'
-			if voice_client1 is not None and os.path.isfile(soundPath):
-				await PlaySound(voice_client1, soundPath)
+		# if message.content.startswith('!오빠'):
+		# 	soundPath = './sound/오빠.mp3'
+		# 	if voice_client1 is not None and os.path.isfile(soundPath):
+		# 		await PlaySound(voice_client1, soundPath)
 
-		if message.content.startswith('!언니'):
-			soundPath = './sound/언니.mp3'
-			if voice_client1 is not None and os.path.isfile(soundPath):
-				await PlaySound(voice_client1, soundPath)
+		# if message.content.startswith('!언니'):
+		# 	soundPath = './sound/언니.mp3'
+		# 	if voice_client1 is not None and os.path.isfile(soundPath):
+		# 		await PlaySound(voice_client1, soundPath)
 
-		if message.content.startswith('!형'):
-			soundPath = './sound/형.mp3'
-			if voice_client1 is not None and os.path.isfile(soundPath):
-				await PlaySound(voice_client1, soundPath)
+		# if message.content.startswith('!형'):
+		# 	soundPath = './sound/형.mp3'
+		# 	if voice_client1 is not None and os.path.isfile(soundPath):
+		# 		await PlaySound(voice_client1, soundPath)
 
 		##################################
 
@@ -1140,7 +1120,7 @@ async def on_message(msg):
 			sayMessage = tmp_sayMessage[3:]
 			await MakeSound(message.author.display_name +'님이.' + sayMessage, './sound/say')
 			await client.get_channel(channel).send("```< " + msg.author.display_name + " >님이 \"" + sayMessage + "\"```", tts=False)
-			await PlaySound(voice_client1, './sound/say.mp3')
+			# await PlaySound(voice_client1, './sound/say.mp3')
 
 		##################################
 
