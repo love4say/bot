@@ -327,7 +327,7 @@ async def my_background_task():
 
 								await client.get_channel(channel).send("```" + message + fixed_bossData[i][0] + ' 5분 전 ' + fixed_bossData[i][3] + "```", tts=False)
 
-								soundPath = './sound/' + fixed_bossData[i][0] + '알림1.mp3'
+								soundPath = './sound/' + fixed_bossData[i][0] + '알림1.mp'
 								if voice_client1 is not None and os.path.isfile(soundPath):
 									await PlaySound(voice_client1, soundPath)
 
@@ -356,7 +356,7 @@ async def my_background_task():
 								await client.get_channel(channel).send(embed=embed, tts=False)
 
 
-							soundPath = './sound/' + fixed_bossData[i][0] + '젠.mp3'
+							soundPath = './sound/' + fixed_bossData[i][0] + '젠.mp'
 							if voice_client1 is not None and os.path.isfile(soundPath):
 								await PlaySound(voice_client1, soundPath)
 
@@ -368,7 +368,7 @@ async def my_background_task():
 								bossFlag0[i] = True
 								await client.get_channel(channel).send("```" + bossData[i][0] + ' ' + basicSetting[3] + '분 전 ' + bossData[i][3] + "```", tts=False)
 
-								soundPath = './sound/' + bossData[i][0] + '알림1.mp3'
+								soundPath = './sound/' + bossData[i][0] + '알림1.mp'
 								if voice_client1 is not None and os.path.isfile(soundPath):
 									await PlaySound(voice_client1, soundPath)
 
@@ -379,7 +379,7 @@ async def my_background_task():
 								bossFlag[i] = True
 								await client.get_channel(channel).send("```" + bossData[i][0] + ' ' + basicSetting[1] + '분 전 ' + bossData[i][3] + "```", tts=False)
 								
-								soundPath = './sound/' + bossData[i][0] + '알림.mp3'
+								soundPath = './sound/' + bossData[i][0] + '알림.mp'
 								if voice_client1 is not None and os.path.isfile(soundPath):
 									await PlaySound(voice_client1, soundPath)
 
@@ -406,7 +406,7 @@ async def my_background_task():
 							await client.get_channel(channel).send(embed=embed, tts=False)
 
 
-						soundPath = './sound/' + bossData[i][0] + '젠.mp3'
+						soundPath = './sound/' + bossData[i][0] + '젠.mp'
 						if voice_client1 is not None and os.path.isfile(soundPath):
 							await PlaySound(voice_client1, soundPath)
 
@@ -417,7 +417,7 @@ async def my_background_task():
 								if bossData[i][2] == '0':
 									await client.get_channel(channel).send("```" +  bossData[i][0] + ' 미입력 됐습니다.```', tts=False)
 
-									soundPath = './sound/' + bossData[i][0] + '미입력.mp3'
+									soundPath = './sound/' + bossData[i][0] + '미입력.mp'
 									if voice_client1 is not None and os.path.isfile(soundPath):
 										await PlaySound(voice_client1, soundPath)
 
@@ -448,7 +448,7 @@ async def my_background_task():
 								else :
 									await client.get_channel(channel).send("```" + bossData[i][0] + ' 멍 입니다.```')
 
-									soundPath = './sound/' + bossData[i][0] + '멍.mp3'
+									soundPath = './sound/' + bossData[i][0] + '멍.mp'
 									if voice_client1 is not None and os.path.isfile(soundPath):
 										await PlaySound(voice_client1, soundPath)
 
@@ -487,7 +487,7 @@ async def my_background_task():
 		
 async def MakeSound(saveSTR, filename):
 	tts = gTTS(saveSTR, lang = 'ko')
-	tts.save('./' + filename + '.mp3')
+	tts.save('./' + filename + '.mp')
 	
 async def PlaySound(voiceclient, filename):
 	source = discord.FFmpegPCMAudio(filename)
@@ -614,13 +614,13 @@ async def initSoundFile(beforeAlert1, beforeAlert):
 		for i in range(bossNum):
 			bossName = bossData[i][0]
 			soundPath = './sound/' + bossName + t
-			if os.path.isfile(soundPath + '.mp3'):
+			if os.path.isfile(soundPath + '.mp'):
 				await MakeSound(bossName + m, soundPath)
 
 		for i in range(fixed_bossNum):
 			bossName = fixed_bossData[i][0]
 			soundPath = './sound/' + bossName + t
-			if os.path.isfile(soundPath + '.mp3'):
+			if os.path.isfile(soundPath + '.m3'):
 				await MakeSound(bossName + m, soundPath)
 
 
